@@ -1,0 +1,22 @@
+Issue
+Virtual Center is running 4.0, update 1.
+
+Virtual Center crashes as soon as a host is added. The vpxd log shows:
+
+
+.
+.
+.
+[2010-08-26 15:38:13.711 07108 warning 'App'] [VpxdMoHost::GetLinkedVmInt] Getting linked vm for vmid 11 on host 10.0.2.121 - COULD NOT FIND IT    
+[2010-08-26 15:38:13.727 07108 error 'App'] [VdbRecord] ExecuteQueryAndFetchResult SQLFetch failed. Error code = 100    
+[2010-08-26 15:38:13.727 07108 error 'App'] [VdbRecord] ExecuteQueryAndFetchResult SQLFetch failed. Error code = 100    
+[2010-08-26 15:38:13.899 07108 error 'App'] Win32 exception: Stack overflow (0xc00000fd)    [2010-08-26 15:38:13.899 07108 error 'App'] eip: 0x4e6067 esp: 0x56b4bcc ebp: 0x56b4be4    
+[2010-08-26 15:38:13.899 07108 error 'App'] eax: 0x56b2000 ebx: 00000000 ecx: 0x56b2bc4 edx: 0xfffffffe edi: 0x3e1eec8 esi: 0x3e1eed8    
+
+Solution
+One of the reasons this can happen is if a VM that is running on the host has a large number of snapshots associated with it. For example a VM with 32 snapshots.
+
+Commit all the snapshots. Add the host to the virtual center.
+
+©Copyright 2021 Hewlett Packard Enterprise Development LP
+Hewlett Packard Enterprise Development shall not be liable for technical or editorial errors or omissions contained herein. The information provided is provided "as is" without warranty of any kind. To the extent permitted by law, neither HPE nor its affiliates, subcontractors or suppliers will be liable for incidental, special or consequential damages including downtime cost; lost profits; damages relating to the procurement of substitute products or services; or damages for loss of data, or software restoration. The information in this document is subject to change without notice. Hewlett Packard Enterprise Development and the names of Hewlett Packard Enterprise Development products referenced herein are trademarks of Hewlett Packard Enterprise Development in the United States and other countries. Other product and company names mentioned herein may be trademarks of their respective owners.
