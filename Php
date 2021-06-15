@@ -1,0 +1,182 @@
+5.7. The config.php file
+The last thing that remains to do before starting with the management of your site, is to configure the file config.php This is important because it sets up a connection between the PHP files of PHP-Nuke and the MySQL database that manages it.
+
+Important	Important: Use a decent text editor!
+ 	
+Do NOT use Notepad or Wordpad to edit the config.php file! These "text" editors don't deserve this name - they introduce extra invisible characters in the file, causing spurious errors with the PHP interpreter. Everything will look O.K., but you will spend many hours trying to find out why your PHP tells you there is an error there.
+
+Recommended text editors are UltraEdit (excellent, but not freeware), Crimson Editor , WinSyntax (both good for PHP and Freeware, Crimson Editor has some feature more than WinSyntax) and HTMLkit (free for personal use).
+
+Various text editors and their functionalities for PHP are discussed in this decent text editor thread.
+
+You need to enter a database username and a password in the config.php file. This user must have administration rights on the PHP-Nuke MySQL database (whose name you also entered in the config.php file). You configure this user to have administration rights on the PHP-Nuke database by either phpMyAdmin, or from the command line:
+
+grant all privileges on db.* to dbuser@localhost identified by 'dbpasswd';
+Note	Please note
+ 	
+This is the database user account, on whose behalf everything is done from the database point of view. That is, no matter which user is doing something in PHP-Nuke, when he presses [Enter], the command will be forwarded to the database client, who will connect to the database server with that username and password you entered in the config.php. If that username and password were wrong, or that user did not have "all privileges" on the PHP-Nuke database (the database whose name you entered in the config.php), then the client will not be able to connect and you will get an error (one of these exactly-speaking but nothing-communicating "...was not a valid resource" errors ).
+
+Let's have a closer look at the configuration process. Compared to the 5.6 version, the config.php file has undergone a radical diet, leaving it with only a few lines. The rest has been moved to the nuke_config table (Section 28.1). This has created problems with the Splatt Forum (Section 7.1), which also used a table with that name. When you open the file “config.php” you will see the following near the top:
+
+$dbhost = "localhost"; (1)
+$dbuname = "root"; (2)
+$dbpass = ""; (3)
+$dbname = "nuke"; (4)
+$prefix = "nuke"; (5)
+$user_prefix = "nuke"; (6)
+$dbtype = "MySQL"; (7)
+$sitekey = "SdFk*fa28367-dm56w69.3a2fDS+e9"; (8)
+(1)
+In place of "localhost" you will have to put the host/server that the database is installed on. If this is your own computer, the "localhost" is O.K., otherwise you will have to ask your ISP.
+(2)
+In place of "root" you must put the username of the database user that PHP-Nuke will have to use in order to connect to the database and execute the necessary database operations. This user must have been grented all privileges to the PHP-Nuke database as discussed above.
+(3)
+You will have to insert the password of the database user here.
+(4)
+In place of "nuke" you will have to insert the name of your database here.
+(5)
+I recommend this to be left to its default value, "nuke", is the prefix that goes in front of the name of every database table.
+(6)
+This is the prefix that goes in front of the name of every database user table. The idea here is that you can have one prefix, i.e. one PHP-Nuke database, but many user prefixes, i.e. different user tables for different sites. The user tables will have a different user_prefix in their names, but the rest of the tables will still use prefix, thus sharing the same nuke database among different user bases from different sites.
+(7)
+Leave this to "MySQL", if you have a MySQL database (which will be true in most situations). This is case sensitive, so "mysql" or "Mysql" will not do, it has to be exactly "MySQL".
+(8)
+You should change this key to be a unique key that identifies your site. Ideally, no two sites should have the same key.The site key is used to create the random number for the security image (Figure 3-28) in the Your Account module and the administration section and is an important but often overlooked security feature of PHP-Nuke. See also Section 23.4.2 for software that can help you create a truly random site key.
+Let's do an example:
+
+Host DB: 212.110.12.297
+
+User DB: Pippo
+
+Password DB: Topolino
+
+Database Name: Orazio
+
+Operating System Used: Linux (what else!!! :-) )
+
+The file config.php should then look like:
+
+$dbhost = "212.110.12.297";
+$dbuname = "Pippo";
+$dbpass = "Topolino";
+$dbname = "Orazio";
+$system = 0;
+$prefix = "nuke"; 
+$sitekey = "SdFk*jkjbkuuz-dm98769.4b67DS+e4";
+Caution	Attention!
+ 	
+This is case sensitive! Remember to use The Capital Letters!!! On Linux systems, if you write a user name or a password without taking care of letter case, the system will not allow you to log in.
+
+You must distinguish between the database user (and password), which you enter in the config.php file, and the administrator "God" account. The database user is only known to the database. The administrator "God" account (there are also other administrator levels), on the other side, is created by PHP-Nuke automatically for you. This account, as well as the users accounts, exist only in the PHP-Nuke database, not in the MySQL server's configuration.
+
+How is this PHP-Nuke administrator created? If you go to the "Home" link of PHP-Nuke., you will then see a message telling you the following - just do what it tells you:
+
+Welcome to PHP-Nuke!
+
+Congratulations! You have now a web portal installed!. You can edit or change this message from the Administration page.
+
+For security reasons the best idea is to create the Super User right NOW by clicking HERE
+
+Click on that link and it will create the PHP-Nuke administrator account for you.
+
+Note	A superuser is NOT a registered User
+ 	
+A superuser is an administrator with all admin powers. One should call it superadmin, because everyone gets confused at first. It is fine (and normal) to have a superuser admin and a registered user that have the same name. Be careful with side effects when you are logged in as both, see Login Block on Left doesn't go away.
+
+We are done, the only thing that remains to do is to enter the administration section (www.yoursite.com/admin.php). The very first time you will log in using “God” as username and “Password” as password. I recommend you to change these as soon as possible. Immediately after that, you should take some security measures, see Section 23.4.2.
+
+The config.php file also defines two arrays, the $AllowableHTML and $CensorList array. As its name says, $AllowableHTML is an associative array containing entries for all HTML tags that are to be allowed on your site:
+
+$AllowableHTML = array("b"=>1,
+                    "i"=>1,
+                    "a"=>2,
+                    "em"=>1,
+                    "br"=>1,
+                    "strong"=>1,
+                    "blockquote"=>1,
+                    "tt"=>1,
+                    "li"=>1,
+                    "ol"=>1,
+                    "H1"=>1,
+                    "H2"=>1,
+                    "H3"=>1,
+                    "H4"=>1,
+                    "center"=>1,
+                    "img"=>2,
+                    "alt"=>1,
+                    "table"=>2,
+                    "tr"=>2,
+                    "td"=>2,
+                    "p"=>2,
+                    "div"=>2,
+                    "font"=>2,
+                    "p"=>1,
+                    "p"=>1,
+                    "ul"=>1);
+The meaning of "1" and "2" is whether the tag accepts attributes or not. For example, if you want the <p> tag to NOT accept attributes (i.e. you accept <p> but you don't accept <p align="center">) the you put "1", otherwise (i.e., if attributes like "align" etc. are accepted) you put "2". That this is indeed so, can be seen from the check_html() function of mainfile.php (see also Section 16.1):
+
+                if ($a = $AllowableHTML[$tag])
+                        if ($reg[1][0] == "/") $tag = "</$tag>";
+                        elseif (($a == 1) || ($reg[2] == "")) $tag = "<$tag>";
+                        else {
+                          # Place here the double quote fix function.
+                          $attrb_list=delQuotes($reg[2]);
+                          // A VER
+                          $attrb_list = ereg_replace("&","&amp;",$attrb_list);
+                          $tag = "<$tag" . $attrb_list . ">";
+                        } # Attribs in tag allowed
+                else $tag = "";
+The code checks if the associated value to the given tag ($tag) in the $AllowableHTML array is “1” or empty. If this is the case, the value of $tag is only “<$tag>”. Otherwise a set of replacements takes place on the attribute list:
+
+The delQuotes() function deletes duplicate space and adds escaped quotes around each attribute value.
+
+The ereg_replace() function replaces the ampersand (&) with its HTML entity “&amp;”.
+
+If the tag is not in the $AllowableHTML array, the line in the code above shows that it is replaced by the empty string, i.e. it is not echoed at all. Thus, if there is an HTML tag that you are missing, you should enter it in the $AllowableHTML array and take care to enter correctly a “1” or a “2” according to your needs. See for example Smilies in news.
+
+The $CensorList array contains a list of words that you don't want to see in texts of articles on your site.
+
+5.7.1. More than one PHP-Nuke sites
+The variables in the config.php file allow for quite some flexibility when it comes to installing more than one PHP-Nuke sites that have to be related in one or the other way:
+
+5.7.1.1. Different PHP-Nuke sites from the same database
+If you have two (or more) PHP-Nuke sites, located in different Web URLs (or different local directories), that you want to operate from the same database, you have some handwork to do, but it is not difficult. From the point of view of the database server, what differentiates one PHP-Nuke site from another, is the name of the table(s) used. In PHP-Nuke, all tables come with a prefix: the users table uses the $user_prefix prefix from the config.php file(Section 3.7), while all other tables use $prefix.
+
+Thus, you don't need a second database to operate a second PHP-Nuke site. A different database helps keep the installations separate by providing a kind of “container” to put each installation's tables in, but apart from this, there is nothing special to it. To use only one database for two PHP-Nuke installations, proceed as follows:
+
+Use separate $prefix and $user_prefix values in each site's config.php, e.g.
+
+$prefix = "nuke1";
+$user_prefix = "nuke1";
+in config.php for site 1 and
+
+$prefix = "nuke2";
+$user_prefix = "nuke2";
+in config.php for site 2. All other values should stay identical in the config.php files of both sites.
+
+Edit the nuke.sql file (located under the sql directory of the PHP-Nuke package) for each site. Change every occurence of “nuke_” to “nuke1_” for site 1 and to “nuke2_” for site 2, then proceed with the installation as described in Section 3.2.4. If you use nukesql.php (Section 3.5) for the installation, see the tip at the end of this section.
+
+5.7.1.2. Different PHP-Nuke sites with the same user base
+There are situations that you might want to share users among your PHP-Nuke sites. For example, if you have a site about cars and another one about car insurance, your users will probably be interested in both. But requiring them to enter two different logins and passwords is not going to make them happy - that's where $user_prefix comes into play.
+
+The idea behind a separate prefix for the users table in PHP-Nuke is to enable you to keep all other tables separate, but use the same users table across different PHP-Nuke installations. By using a different $prefix for each site, but the same $user_prefix for both, your users will require only one login and password - and will be recognized by the second site, while logged into the first one and vice versa.
+
+To use the same user base in two separate PHP-Nuke sites, proceed as follows:
+
+Use the same database as descibed in Section 3.7.1.1.
+
+Use separate $prefix values, but the same $user_prefix for both config.php files, e.g.
+
+$prefix = "nuke1";
+$user_prefix = "nuke-common";
+in config.php for site 1 and
+
+$prefix = "nuke2";
+$user_prefix = "nuke-common";
+in config.php for site 2. All other values should stay identical in the config.php files of both sites.
+
+Edit the nuke.sql file (located under the sql directory of the PHP-Nuke package) for each site. Change every occurence of “nuke_” to “nuke1_” for site 1 and to “nuke2_” for site 2, except the ones for the nuke_users table, which you should change to “nuke-common”. The full name of the users table should thus be “nuke-common_users” in both nuke.sql files. Then proceed with the installation as described in Section 3.2.4.
+
+Tip	Using nukesql.php
+ 	
+If you use nukesql.php (Section 3.5) for the installation, you should change the prefixes as above and point your browser to each instance of nukesql.php (one for each installation, located in the respective PHP-Nuke root directory). It will then create the tables with the right prefixes for you.
